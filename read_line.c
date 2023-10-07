@@ -1,5 +1,6 @@
 #include "main.h"
-/* line_read - check code
+/**
+ * line_read - check code
  * Return: char
  */
 char *line_read(void)
