@@ -5,16 +5,16 @@
  * @av: av
  * Return: 0
  */
-int main(int ac, char **av)
+int main(int ac, char **av, char **env)
 {
-	int status = 0, i = 0;
+	int status = 0;
 	char *line = NULL, **cmd = NULL;
+	pid_t fork_return;
 	(void) ac;
 	(void) av;
 
 	while (1)
 	{
-		i = 0;
 		line = line_read();
 		if (line == NULL)
 		{
@@ -25,10 +25,20 @@ int main(int ac, char **av)
 		cmd = tokenizer(line);
 		if (!cmd)
 			continue;
-		while (cmd[i])
+		fork_return = fork();
+		if (fork_return == 0)
 		{
-			printf("%s\n", cmd[i]);
-			i++;
+			if (execve(cmd[0], cmd, env) == -1)
+			{
+				perror(cmd[0]);
+				free_list(cmd);
+				free(line);
+				exit(99);
+			}
+		}
+		else
+		{
+			waitpid(fork_return, &status, 0);
 		}
 		free_list(cmd);
 		free(line);
