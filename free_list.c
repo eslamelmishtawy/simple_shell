@@ -11,6 +11,11 @@ void free_list(char **list)
 {
 	int i = 0;
 
+	if (!list)
+	{
+		return;
+	}
+
 	while (list[i])
 	{
 		free(list[i]);
